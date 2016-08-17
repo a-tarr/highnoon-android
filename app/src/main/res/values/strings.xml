@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Highnoon</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Submit</string>
+    <string name="place_not_found">User data not found.</string>
 </resources>
