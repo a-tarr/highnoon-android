@@ -3,12 +3,10 @@ package us.highnoon.anthony.highnoon;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -25,7 +24,7 @@ import org.json.JSONObject;
 public class StatsFragment extends Fragment {
     TextView details;
     Handler handler;
-    private static final String OVERWATCH_API = "https://owapi.net/api/v2/u/bapplebo-1602/stats/general";
+    private static final String OVERWATCH_API = "https://owapi.net/api/v2/u/%s/stats/general";
 
     public StatsFragment() {
         handler = new Handler();
@@ -43,26 +42,30 @@ public class StatsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getUsers();
+        getUsers("bapplebo-1602");
     }
 
-//    //this works at least
-//    public void getUsers() {
-//        RequestQueue queue = Volley.newRequestQueue(getActivity());
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, OVERWATCH_API, null,
-//            new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                    TextView details = (TextView)getView().findViewById(R.id.details);
-//                    details.setText(response.toString());
-//                }
-//            },
-//            new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//
-//                }
-//            });
-//        queue.add(jsonObjectRequest);
-//    }
+    //this works at least
+    public void getUsers(String user) {
+        String URL = String.format(OVERWATCH_API, user);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    TextView details = (TextView)getView().findViewById(R.id.details);
+                    try {
+                        details.setText(response.getString("battletag"));
+                    } catch (JSONException e) { }
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+        queue.add(jsonObjectRequest);
+    }
 }
